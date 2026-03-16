@@ -18,6 +18,7 @@ import {
   deleteCalendarDayAction,
   upsertCalendarDayAction,
 } from "@/server/actions/admin";
+import { adminScheduleSuggestions } from "@/lib/site";
 
 function getTone(status: CalendarDay["status"] | null) {
   switch (status) {
@@ -50,7 +51,7 @@ export function AdminCalendarManager({
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+    <div className="grid gap-6">
       <section className="card-surface rounded-[2rem] p-6 md:p-7">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
@@ -70,7 +71,7 @@ export function AdminCalendarManager({
           ))}
         </div>
 
-        <div className="mt-6 grid gap-6 xl:grid-cols-2">
+        <div className="mt-6 grid gap-6 2xl:grid-cols-2">
           {months.map((month) => (
             <section key={month.label} className="rounded-[1.8rem] bg-background/55 p-4 md:p-5">
               <h3 className="font-display text-3xl text-ink">{month.label}</h3>
@@ -88,7 +89,7 @@ export function AdminCalendarManager({
                     type="button"
                     onClick={() => setSelectedKey(cell.key)}
                     className={clsx(
-                      "min-h-[5.1rem] rounded-[1rem] border p-2.5 text-left transition md:min-h-[5.5rem]",
+                      "min-h-[4.7rem] rounded-[1rem] border p-2 text-left transition md:min-h-[5rem]",
                       getTone(cell.status),
                       !cell.inCurrentMonth && "opacity-30",
                       selectedKey === cell.key && "ring-2 ring-moss shadow-[0_12px_30px_rgba(85,107,93,0.18)]",
@@ -110,15 +111,18 @@ export function AdminCalendarManager({
                       ) : null}
                     </div>
 
-                    {cell.label ? (
-                      <p className="mt-2 line-clamp-2 text-[0.8rem] font-medium leading-4 md:text-sm">
-                        {cell.label}
-                      </p>
-                    ) : (
-                      <p className="mt-2 text-[0.72rem] leading-4 text-stone/80">
-                        {cell.classCount > 0 ? "Óra részletei elérhetők" : "Nincs külön jelölés"}
-                      </p>
-                    )}
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {cell.classCount > 0 ? (
+                        <span className="rounded-full bg-moss/14 px-2 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-moss">
+                          {cell.classCount} óra
+                        </span>
+                      ) : null}
+                      {cell.label ? (
+                        <span className="max-w-full truncate rounded-full bg-white/75 px-2 py-1 text-[0.62rem] font-semibold text-stone">
+                          {cell.label}
+                        </span>
+                      ) : null}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -184,9 +188,15 @@ export function AdminCalendarManager({
             <input
               name="label"
               className="input-field"
+              list="calendar-label-suggestions"
               placeholder="Pihenőnap vagy workshop"
               defaultValue={selectedMarkedDay?.label ?? ""}
             />
+            <datalist id="calendar-label-suggestions">
+              {adminScheduleSuggestions.calendarLabels.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
           </div>
 
           <div className="grid gap-2">

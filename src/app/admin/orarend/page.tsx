@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { requireAdminProfile } from "@/lib/auth";
 import { formatDateRange, toStudioDateTimeLocalInput } from "@/lib/format";
 import { getClasses } from "@/lib/data";
+import { adminScheduleSuggestions } from "@/lib/site";
 import {
   deleteClassSessionAction,
   upsertClassSessionAction,
@@ -67,10 +68,16 @@ export default async function AdminSchedulePage({
               <label className="text-sm font-semibold text-ink">Óra neve</label>
               <input
                 name="title"
+                list="class-title-suggestions"
                 className="input-field"
                 placeholder="Kezdő jóga"
                 required
               />
+              <datalist id="class-title-suggestions">
+                {adminScheduleSuggestions.classTitles.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
             </div>
             <div className="grid gap-2">
               <label className="text-sm font-semibold text-ink">Státusz</label>
@@ -110,19 +117,31 @@ export default async function AdminSchedulePage({
               <label className="text-sm font-semibold text-ink">Helyszín neve</label>
               <input
                 name="locationName"
+                list="location-name-suggestions"
                 className="input-field"
                 placeholder="Mezőtúr"
                 required
               />
+              <datalist id="location-name-suggestions">
+                {adminScheduleSuggestions.locationNames.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
             </div>
             <div className="grid gap-2">
               <label className="text-sm font-semibold text-ink">Pontos hely</label>
               <input
                 name="locationAddress"
+                list="location-address-suggestions"
                 className="input-field"
                 placeholder="Karcagi Szakképzési Centrum (626)"
                 required
               />
+              <datalist id="location-address-suggestions">
+                {adminScheduleSuggestions.locationAddresses.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
             </div>
           </div>
 
@@ -143,10 +162,16 @@ export default async function AdminSchedulePage({
               <label className="text-sm font-semibold text-ink">Rövid leírás</label>
               <input
                 name="description"
+                list="description-suggestions"
                 className="input-field"
                 placeholder="Nyugodt, légzésre épülő gyakorlás."
                 required
               />
+              <datalist id="description-suggestions">
+                {adminScheduleSuggestions.descriptions.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
             </div>
           </div>
 
@@ -176,6 +201,10 @@ export default async function AdminSchedulePage({
             Visszatérő alkalomként jelölöm
           </label>
 
+          <p className="text-sm text-stone">
+            A javaslatokból választhatsz, de bármelyik mezőbe szabadon is beírhatsz saját szöveget.
+          </p>
+
           <div>
             <Button>Óra mentése</Button>
           </div>
@@ -204,125 +233,139 @@ export default async function AdminSchedulePage({
         ) : null}
 
         {classes.map((item) => (
-          <article key={item.id} className="card-surface rounded-[2rem] p-6">
-            <div className="flex flex-col gap-3 border-b border-stone/10 pb-5 md:flex-row md:items-start md:justify-between">
+          <details key={item.id} className="card-surface overflow-hidden rounded-[2rem]" open={false}>
+            <summary className="flex cursor-pointer list-none flex-col gap-3 px-6 py-5 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-sm uppercase tracking-[0.16em] text-moss">{item.locationName}</p>
                 <h3 className="mt-2 text-2xl font-semibold text-ink">{item.title}</h3>
                 <p className="mt-2 text-stone">{formatDateRange(item.startsAt, item.endsAt)}</p>
               </div>
-              <span className="rounded-full bg-sage/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-moss">
-                {item.status === "scheduled"
-                  ? "Tervezett"
-                  : item.status === "cancelled"
-                    ? "Elmarad"
-                    : "Megtartva"}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="rounded-full bg-sage/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-moss">
+                  {item.status === "scheduled"
+                    ? "Tervezett"
+                    : item.status === "cancelled"
+                      ? "Elmarad"
+                      : "Megtartva"}
+                </span>
+                <span className="text-sm font-semibold text-stone">Megnyitás</span>
+              </div>
+            </summary>
+
+            <div className="border-t border-stone/10 px-6 py-5">
+              <form action={upsertClassSessionAction} className="grid gap-4">
+                <input type="hidden" name="id" value={item.id} />
+                <input type="hidden" name="repeatMode" value="none" />
+                <input type="hidden" name="repeatCount" value="1" />
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Óra neve</label>
+                    <input
+                      name="title"
+                      defaultValue={item.title}
+                      list="class-title-suggestions"
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Státusz</label>
+                    <select name="status" defaultValue={item.status} className="select-field">
+                      <option value="scheduled">Tervezett</option>
+                      <option value="cancelled">Elmarad</option>
+                      <option value="completed">Megtartva</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Kezdés</label>
+                    <input
+                      name="startsAtLocal"
+                      type="datetime-local"
+                      defaultValue={toStudioDateTimeLocalInput(item.startsAt)}
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Befejezés</label>
+                    <input
+                      name="endsAtLocal"
+                      type="datetime-local"
+                      defaultValue={toStudioDateTimeLocalInput(item.endsAt)}
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Helyszín neve</label>
+                    <input
+                      name="locationName"
+                      defaultValue={item.locationName}
+                      list="location-name-suggestions"
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Pontos hely</label>
+                    <input
+                      name="locationAddress"
+                      defaultValue={item.locationAddress}
+                      list="location-address-suggestions"
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-[0.35fr_1fr]">
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Létszám</label>
+                    <input
+                      name="capacity"
+                      type="number"
+                      min="1"
+                      max="99"
+                      defaultValue={item.capacity}
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-semibold text-ink">Leírás</label>
+                    <input
+                      name="description"
+                      defaultValue={item.description}
+                      list="description-suggestions"
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <label className="flex items-center gap-3 text-sm text-stone">
+                  <input type="checkbox" name="isRecurring" defaultChecked={item.isRecurring} />
+                  Visszatérő alkalomként jelölöm
+                </label>
+
+                <div className="flex flex-wrap gap-3">
+                  <Button>Módosítás mentése</Button>
+                </div>
+              </form>
+
+              <form action={deleteClassSessionAction} className="mt-3">
+                <input type="hidden" name="id" value={item.id} />
+                <Button variant="ghost">Óra törlése</Button>
+              </form>
             </div>
-
-            <form action={upsertClassSessionAction} className="mt-5 grid gap-4">
-              <input type="hidden" name="id" value={item.id} />
-              <input type="hidden" name="repeatMode" value="none" />
-              <input type="hidden" name="repeatCount" value="1" />
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Óra neve</label>
-                  <input name="title" defaultValue={item.title} className="input-field" required />
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Státusz</label>
-                  <select name="status" defaultValue={item.status} className="select-field">
-                    <option value="scheduled">Tervezett</option>
-                    <option value="cancelled">Elmarad</option>
-                    <option value="completed">Megtartva</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Kezdés</label>
-                  <input
-                    name="startsAtLocal"
-                    type="datetime-local"
-                    defaultValue={toStudioDateTimeLocalInput(item.startsAt)}
-                    className="input-field"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Befejezés</label>
-                  <input
-                    name="endsAtLocal"
-                    type="datetime-local"
-                    defaultValue={toStudioDateTimeLocalInput(item.endsAt)}
-                    className="input-field"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Helyszín neve</label>
-                  <input
-                    name="locationName"
-                    defaultValue={item.locationName}
-                    className="input-field"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Pontos hely</label>
-                  <input
-                    name="locationAddress"
-                    defaultValue={item.locationAddress}
-                    className="input-field"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-[0.35fr_1fr]">
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Létszám</label>
-                  <input
-                    name="capacity"
-                    type="number"
-                    min="1"
-                    max="99"
-                    defaultValue={item.capacity}
-                    className="input-field"
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <label className="text-sm font-semibold text-ink">Leírás</label>
-                  <input
-                    name="description"
-                    defaultValue={item.description}
-                    className="input-field"
-                    required
-                  />
-                </div>
-              </div>
-
-              <label className="flex items-center gap-3 text-sm text-stone">
-                <input type="checkbox" name="isRecurring" defaultChecked={item.isRecurring} />
-                Visszatérő alkalomként jelölöm
-              </label>
-
-              <div className="flex flex-wrap gap-3">
-                <Button>Módosítás mentése</Button>
-              </div>
-            </form>
-
-            <form action={deleteClassSessionAction} className="mt-3">
-              <input type="hidden" name="id" value={item.id} />
-              <Button variant="ghost">Óra törlése</Button>
-            </form>
-          </article>
+          </details>
         ))}
       </section>
     </AdminShell>

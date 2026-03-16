@@ -85,6 +85,21 @@ export const locationItems = [
 export const workshopNote =
   "Workshopok időről időre indulnak, évente 1–2 alkalommal.";
 
+export const adminScheduleSuggestions = {
+  classTitles: ["Kezdő jóga", "Középhaladó jóga", "Workshop", "Meditáció"],
+  locationNames: ["Mezőtúr", "Gyomaendrőd"],
+  locationAddresses: [
+    "Karcagi Szakképzési Centrum (626)",
+    "Mozgáskultúra Stúdió",
+  ],
+  descriptions: [
+    "Nyugodt, légzésre épülő gyakorlás.",
+    "Középhaladó, stabilitásra és figyelemre építő óra.",
+    "Tematikus elmélyülés hosszabb gyakorlással.",
+  ],
+  calendarLabels: ["Szabadnap", "Pihenőnap", "Workshop", "Ünnepnap", "Szünet"],
+};
+
 export const imageLibrary = {
   hero:
     "https://267a11ce2e.cbaul-cdnwnd.com/89e3e6c30a1cd3cf1fb6f9f97db78804/200000004-2431a2431c/IMG_4083.jpeg?ph=267a11ce2e",
