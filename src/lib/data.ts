@@ -20,6 +20,7 @@ import {
 import type {
   BlogPost,
   Booking,
+  CalendarDay,
   ClassSession,
   ContactMessage,
   AdminDashboardSnapshot,
@@ -158,6 +159,41 @@ export async function getClasses(includePast = false): Promise<ClassSession[]> {
       : normalized.filter((item) => parseISO(item.startsAt).getTime() >= Date.now());
   } catch {
     return sortClasses(mockClasses);
+  }
+}
+
+export async function getCalendarDays(options?: { from?: string; to?: string }) {
+  if (!hasSupabasePublicEnv) {
+    return [] as CalendarDay[];
+  }
+
+  try {
+    const supabase = await createServerSupabaseClient();
+    let request = supabase!.from("calendar_days").select("*").order("day");
+
+    if (options?.from) {
+      request = request.gte("day", options.from);
+    }
+
+    if (options?.to) {
+      request = request.lte("day", options.to);
+    }
+
+    const { data } = await request;
+
+    if (!data) {
+      return [] as CalendarDay[];
+    }
+
+    return data.map((item) => ({
+      id: item.id,
+      day: item.day,
+      status: item.status,
+      label: item.label ?? "",
+      note: item.note ?? "",
+    })) as CalendarDay[];
+  } catch {
+    return [] as CalendarDay[];
   }
 }
 

@@ -20,11 +20,14 @@ export const mainNavigation = [
   { href: "/", label: "Kezdőlap" },
   { href: "/rolam", label: "Bemutatkozás" },
   { href: "/orarend", label: "Órarend" },
+  { href: "/blog", label: "Blog" },
   { href: "/kapcsolat", label: "Kapcsolat" },
 ];
 
 export const adminNavigation = [
   { href: "/admin", label: "Áttekintés" },
+  { href: "/admin/orarend", label: "Órarend" },
+  { href: "/admin/naptar", label: "Naptár" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/media", label: "Média" },
 ];

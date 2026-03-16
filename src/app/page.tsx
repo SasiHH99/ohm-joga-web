@@ -3,7 +3,8 @@ import Image from "next/image";
 import { ButtonLink } from "@/components/ui/button";
 import { JsonLd } from "@/components/ui/json-ld";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { getSettings } from "@/lib/data";
+import { getSettings, getUpcomingClasses } from "@/lib/data";
+import { formatDateRange, formatWeekdayLong } from "@/lib/format";
 import {
   audienceNotes,
   contactInfo,
@@ -11,12 +12,9 @@ import {
   imageLibrary,
   introductionText,
   introductionTitle,
-  locationItems,
-  pricingItems,
   scheduleEntries,
   siteConfig,
   teachingSinceLabel,
-  workshopNote,
 } from "@/lib/site";
 
 export const metadata = {
@@ -26,7 +24,7 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const settings = await getSettings();
+  const [settings, upcomingClasses] = await Promise.all([getSettings(), getUpcomingClasses(3)]);
 
   return (
     <>
@@ -114,44 +112,43 @@ export default async function HomePage() {
       <section className="section-shell py-18 md:py-24">
         <SectionHeading
           eyebrow="Órarend"
-          title="Heti alkalmak nyugodt, jól átlátható rendben."
+          title="Következő alkalmak és heti ritmus egy külön oldalon összerendezve."
+          description="A teljes dátumlista, időpontok és a jelölt napok a külön órarend oldalon jelennek meg."
         />
 
         <div className="mt-12 grid gap-4">
-          {scheduleEntries.map((item) => (
-            <div
-              key={`${item.day}-${item.location}`}
-              className="grid gap-3 rounded-[1.75rem] border border-white/40 bg-ivory/72 px-6 py-5 shadow-[0_20px_70px_rgba(57,49,39,0.07)] md:grid-cols-[0.8fr_1fr_0.9fr]"
-            >
-              <p className="text-sm uppercase tracking-[0.18em] text-moss">{item.day}</p>
-              <p className="text-lg font-semibold text-ink">{item.className}</p>
-              <p className="text-stone">{item.location}</p>
-            </div>
-          ))}
+          {upcomingClasses.length > 0
+            ? upcomingClasses.map((item) => (
+                <div
+                  key={item.id}
+                  className="grid gap-3 rounded-[1.75rem] border border-white/40 bg-ivory/72 px-6 py-5 shadow-[0_20px_70px_rgba(57,49,39,0.07)] md:grid-cols-[0.95fr_1.15fr_0.9fr]"
+                >
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.18em] text-moss">
+                      {formatWeekdayLong(item.startsAt)}
+                    </p>
+                    <p className="mt-2 text-stone">{formatDateRange(item.startsAt, item.endsAt)}</p>
+                  </div>
+                  <p className="text-lg font-semibold text-ink">{item.title}</p>
+                  <p className="text-stone">{item.locationName}</p>
+                </div>
+              ))
+            : scheduleEntries.map((item) => (
+                <div
+                  key={`${item.day}-${item.location}`}
+                  className="grid gap-3 rounded-[1.75rem] border border-white/40 bg-ivory/72 px-6 py-5 shadow-[0_20px_70px_rgba(57,49,39,0.07)] md:grid-cols-[0.8fr_1fr_0.9fr]"
+                >
+                  <p className="text-sm uppercase tracking-[0.18em] text-moss">{item.day}</p>
+                  <p className="text-lg font-semibold text-ink">{item.className}</p>
+                  <p className="text-stone">{item.location}</p>
+                </div>
+              ))}
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          <div className="card-surface rounded-[1.75rem] p-6">
-            <p className="eyebrow">Árak</p>
-            <div className="mt-5 space-y-3 text-lg leading-8 text-stone">
-              {pricingItems.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
-            </div>
-          </div>
-
-          <div className="card-surface rounded-[1.75rem] p-6">
-            <p className="eyebrow">Helyszínek</p>
-            <div className="mt-5 space-y-3 text-lg leading-8 text-stone">
-              {locationItems.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-[1.75rem] border border-sage/40 bg-sage/20 px-6 py-5 text-stone">
-          {workshopNote}
+        <div className="mt-8">
+          <ButtonLink href="/orarend" variant="secondary">
+            Teljes órarend és naptár
+          </ButtonLink>
         </div>
       </section>
 

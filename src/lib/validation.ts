@@ -20,3 +20,24 @@ export const blogFormSchema = z.object({
   metaTitle: z.string().min(5),
   metaDescription: z.string().min(10),
 });
+
+export const classFormSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(3),
+  description: z.string().min(3),
+  startsAtLocal: z.string().min(1),
+  endsAtLocal: z.string().min(1),
+  locationName: z.string().min(2),
+  locationAddress: z.string().min(2),
+  capacity: z.coerce.number().int().min(1).max(99),
+  status: z.enum(["scheduled", "cancelled", "completed"]),
+  isRecurring: z.boolean().optional(),
+});
+
+export const calendarDayFormSchema = z.object({
+  id: z.string().optional(),
+  day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  status: z.enum(["class-day", "free-day", "unavailable"]),
+  label: z.string().max(80).optional(),
+  note: z.string().max(300).optional(),
+});

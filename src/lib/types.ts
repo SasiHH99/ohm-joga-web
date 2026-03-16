@@ -28,6 +28,14 @@ export type ClassSession = {
   isRecurring: boolean;
 };
 
+export type CalendarDay = {
+  id: string;
+  day: string;
+  status: "class-day" | "free-day" | "unavailable";
+  label: string;
+  note: string;
+};
+
 export type Booking = {
   id: string;
   serviceId: string;

@@ -69,6 +69,16 @@ create table if not exists public.classes (
   updated_at timestamptz not null default timezone('utc', now())
 );
 
+create table if not exists public.calendar_days (
+  id uuid primary key default gen_random_uuid(),
+  day date not null unique,
+  status text not null default 'free-day' check (status in ('class-day', 'free-day', 'unavailable')),
+  label text,
+  note text,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
 create table if not exists public.bookings (
   id uuid primary key default gen_random_uuid(),
   service_id uuid not null references public.services(id) on delete restrict,
@@ -155,6 +165,7 @@ alter table public.settings enable row level security;
 alter table public.admin_users enable row level security;
 alter table public.services enable row level security;
 alter table public.classes enable row level security;
+alter table public.calendar_days enable row level security;
 alter table public.bookings enable row level security;
 alter table public.blog_categories enable row level security;
 alter table public.blog_posts enable row level security;
@@ -190,6 +201,14 @@ for select using (status = 'scheduled');
 
 drop policy if exists "admins manage classes" on public.classes;
 create policy "admins manage classes" on public.classes
+for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "public read calendar days" on public.calendar_days;
+create policy "public read calendar days" on public.calendar_days
+for select using (true);
+
+drop policy if exists "admins manage calendar days" on public.calendar_days;
+create policy "admins manage calendar days" on public.calendar_days
 for all using (public.is_admin()) with check (public.is_admin());
 
 drop policy if exists "admins manage bookings" on public.bookings;
@@ -237,6 +256,10 @@ for each row execute procedure public.set_updated_at();
 
 drop trigger if exists set_classes_updated_at on public.classes;
 create trigger set_classes_updated_at before update on public.classes
+for each row execute procedure public.set_updated_at();
+
+drop trigger if exists set_calendar_days_updated_at on public.calendar_days;
+create trigger set_calendar_days_updated_at before update on public.calendar_days
 for each row execute procedure public.set_updated_at();
 
 drop trigger if exists set_bookings_updated_at on public.bookings;
