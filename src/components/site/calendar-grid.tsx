@@ -52,7 +52,7 @@ export function CalendarGrid({
               <h3 className="font-display text-3xl text-ink">{month.label}</h3>
             </div>
 
-            <div className="mt-5 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-[0.16em] text-stone">
+            <div className="mt-5 grid grid-cols-7 gap-2 text-center text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-stone md:text-xs">
               {weekdays.map((weekday) => (
                 <span key={`${month.label}-${weekday}`}>{weekday}</span>
               ))}
@@ -63,7 +63,7 @@ export function CalendarGrid({
                 <div
                   key={cell.key}
                   className={clsx(
-                    "min-h-[6.5rem] rounded-[1.2rem] border p-3 transition",
+                    "min-h-[5.25rem] rounded-[1rem] border p-2.5 transition md:min-h-[5.75rem]",
                     getTone(cell.status),
                     !cell.inCurrentMonth && "opacity-35",
                   )}
@@ -78,17 +78,21 @@ export function CalendarGrid({
                       {cell.dayNumber}
                     </span>
                     {cell.classCount > 0 ? (
-                      <span className="text-[0.68rem] uppercase tracking-[0.16em] text-moss">
+                      <span className="text-[0.68rem] uppercase tracking-[0.12em] text-moss">
                         {cell.classCount}x
                       </span>
                     ) : null}
                   </div>
 
                   {cell.label ? (
-                    <p className="mt-3 text-sm font-medium leading-5 text-ink">{cell.label}</p>
+                    <p className="mt-2 text-[0.8rem] font-medium leading-4 text-ink md:text-sm">
+                      {cell.label}
+                    </p>
                   ) : null}
                   {cell.note ? (
-                    <p className="mt-1 text-xs leading-5 text-stone">{cell.note}</p>
+                    <p className="mt-1 text-[0.72rem] leading-4 text-stone md:text-xs">
+                      {cell.note}
+                    </p>
                   ) : null}
                 </div>
               ))}

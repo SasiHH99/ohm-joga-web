@@ -16,7 +16,7 @@ export function AdminShell({
 }) {
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f5efe7_0%,#f8f4ee_100%)]">
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-8 md:grid-cols-[18rem_1fr] md:px-8">
+      <div className="mx-auto grid max-w-[96rem] gap-8 px-5 py-8 md:grid-cols-[16.5rem_minmax(0,1fr)] md:px-8">
         <div className="space-y-5">
           <AdminSidebar profile={profile} currentPath={currentPath} />
           <form action={logoutAdminAction}>
@@ -25,7 +25,7 @@ export function AdminShell({
             </Button>
           </form>
         </div>
-        <div>{children}</div>
+        <div className="min-w-0">{children}</div>
       </div>
     </div>
   );

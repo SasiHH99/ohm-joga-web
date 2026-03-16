@@ -1,5 +1,4 @@
 import {
-  addDays,
   addMonths,
   eachDayOfInterval,
   endOfMonth,
@@ -10,7 +9,7 @@ import {
   startOfWeek,
 } from "date-fns";
 
-import { formatCalendarMonthLabel, formatWeekdayShort, toStudioDateKey } from "@/lib/format";
+import { formatCalendarMonthLabel, toStudioDateKey } from "@/lib/format";
 import type { CalendarDay, ClassSession } from "@/lib/types";
 
 export type CalendarCell = {
@@ -36,11 +35,7 @@ export const calendarLegend = [
 ] as const;
 
 export function getCalendarWeekdayLabels() {
-  const monday = startOfWeek(new Date(), { weekStartsOn: 1 });
-
-  return Array.from({ length: 7 }, (_, index) =>
-    formatWeekdayShort(addDays(monday, index)),
-  );
+  return ["H", "K", "Sze", "Cs", "P", "Szo", "V"];
 }
 
 export function buildCalendarMonths({
