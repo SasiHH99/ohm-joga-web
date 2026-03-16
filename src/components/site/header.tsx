@@ -1,8 +1,7 @@
 import Link from "next/link";
 
-import { ButtonLink } from "@/components/ui/button";
-import { mainNavigation } from "@/lib/site";
 import { MobileNav } from "@/components/site/mobile-nav";
+import { mainNavigation } from "@/lib/site";
 
 export function Header() {
   return (
@@ -23,10 +22,6 @@ export function Header() {
             </Link>
           ))}
         </nav>
-
-        <div className="hidden md:block">
-          <ButtonLink href="/foglalas">Óra foglalása</ButtonLink>
-        </div>
 
         <MobileNav />
       </div>

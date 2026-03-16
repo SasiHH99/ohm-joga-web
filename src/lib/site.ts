@@ -12,83 +12,71 @@ export const siteConfig = {
   name: "Ohm Jóga",
   siteUrl: getSafeSiteUrl(),
   description:
-    "Prémium, nyugodt és letisztult jógaélmény magyar nyelven, foglalási rendszerrel, tudástárral és adminfelülettel.",
-  locationLabel: "Személyes órák és online kapcsolódás",
+    "Letisztult, spirituális hangulatú jógaoldal bemutatkozással, órarenddel és kapcsolati információkkal.",
+  locationLabel: "Mezőtúr és Gyomaendrőd",
 };
 
 export const mainNavigation = [
   { href: "/", label: "Kezdőlap" },
-  { href: "/rolam", label: "Rólam" },
-  { href: "/szolgaltatasok", label: "Jógaórák" },
+  { href: "/rolam", label: "Bemutatkozás" },
   { href: "/orarend", label: "Órarend" },
-  { href: "/blog", label: "Tudástár" },
   { href: "/kapcsolat", label: "Kapcsolat" },
 ];
 
-export const adminNavigation = [
-  { href: "/admin", label: "Dashboard" },
-  { href: "/admin/foglalasok", label: "Foglalások" },
-  { href: "/admin/orarend", label: "Órarend" },
-  { href: "/admin/blog", label: "Blog" },
-  { href: "/admin/szolgaltatasok", label: "Szolgáltatások" },
-  { href: "/admin/uzenetek", label: "Üzenetek" },
-  { href: "/admin/velemenyek", label: "Vélemények" },
-  { href: "/admin/media", label: "Média" },
-];
+export const adminNavigation = [{ href: "/admin", label: "Áttekintés" }];
 
-export const featuredMetrics = [
-  { value: "2021", label: "óta tartó jógaoktatás" },
-  { value: "5", label: "fókuszált szolgáltatási pillér" },
-  { value: "1:1", label: "személyes figyelem az egyéni órákon" },
-];
+export const contactInfo = {
+  phoneDisplay: "06 70 385 6749",
+  phoneHref: "+36703856749",
+};
 
-export const aboutValues = [
+export const homeHeroText =
+  "Az Ohm az első, egyetemes mantra, mely a bennünk élő Egység visszhangja. Az Ohm-jóga a Brahmanhoz való visszatérés szimbolikájaként jelenik meg. A testi és lelki gyakorlás általi megérkezés valódi Önmagunkhoz.";
+
+export const teachingSinceLabel = "2021 óta tartó jógaoktatás";
+
+export const introductionTitle = "Rövid bemutatkozás";
+
+export const introductionText =
+  "Egy hosszú belső utazás és megélt tapasztalatok, amik a jóga útjára vittek. A meditáció és a pránajáma volt az első, ami a gyakorlásomban megjelent, később az ászanák, mint a testtel való mély kapcsolódás alapjai vittek tovább. Egy bő évtizednyi tapasztalat pedig megmutatta, hogy hogyan tudom átadni a megszerzett tudást a jóga eszköztárán keresztül úgy, hogy a tradíció mélysége és a jelen kor tapasztalata mind teret nyerve a mai korhoz igazodva teljes egységet alkothassanak.";
+
+export const audienceNotes = [
   {
-    title: "Személyesség",
+    title: "Akik csendesebb belső ritmust keresnek",
     description:
-      "A gyakorlás itt nem futószalag. Figyelmet, ritmust és valódi jelenlétet kapsz.",
+      "Azoknak, akik szeretnének kiszállni a hétköznapok állandó zajából, és finomabb figyelemmel fordulni önmaguk felé.",
   },
   {
-    title: "Hitelesség",
+    title: "Akik a testtel is újra kapcsolódnának",
     description:
-      "A tanítás személyes tapasztalatból nőtt ki: légzésből, gyógyulásból és belső munkából.",
+      "A gyakorlás támaszt ad abban, hogy a mozdulat, a légzés és a belső jelenlét ne váljon szét egymástól.",
   },
   {
-    title: "Letisztultság",
+    title: "Akik nem teljesítményt, hanem mélységet keresnek",
     description:
-      "Minden óra úgy van felépítve, hogy a gyakorlás egyszerre legyen befogadható és mély.",
+      "Itt nem a külső forma kerül előtérbe, hanem az a tér, ahol a gyakorlás valóban önismeretté válhat.",
   },
 ];
 
-export const frequentlyAskedQuestions = [
-  {
-    question: "Kezdőként is csatlakozhatok?",
-    answer:
-      "Igen. A kezdő órák és az egyéni alkalmak kifejezetten úgy vannak kialakítva, hogy biztonságosan és érthetően tudj elindulni.",
-  },
-  {
-    question: "Mit vigyek magammal az órára?",
-    answer:
-      "Kényelmes ruhát, egy nyitott figyelmet, és ha van, saját matracot. A részleteket a visszaigazoló emailben is megkapod.",
-  },
-  {
-    question: "Le lehet mondani a foglalást?",
-    answer:
-      "Igen. Az adminfelületen a foglalások státusza kezelhető, az érdeklődők pedig emailben vagy telefonon is jelezhetik a lemondást.",
-  },
-  {
-    question: "Van online lehetőség?",
-    answer:
-      "Igen. Légzés, meditáció és egyéni támogatás online formában is elérhető, ha ez jobban illeszkedik az élethelyzetedhez.",
-  },
+export const scheduleEntries = [
+  { day: "Hétfő", className: "kezdő jóga", location: "Mezőtúr" },
+  { day: "Szerda", className: "középhaladó jóga", location: "Gyomaendrőd" },
+  { day: "Csütörtök", className: "középhaladó jóga", location: "Mezőtúr" },
 ];
 
-export const bookingBenefits = [
-  "Egyszerű, magyar nyelvű foglalási folyamat",
-  "Kapacitáskezelés és státuszkövetés adminból",
-  "Automatikus email visszaigazolás",
-  "Egyedi időpontkérés lehetősége, ha nincs megfelelő sáv",
+export const pricingItems = [
+  "Ár: 3000 Ft / alkalom",
+  "8 alkalmas bérlet: 20 000 Ft",
+  "A bérlet 10 hétig használható fel.",
 ];
+
+export const locationItems = [
+  "Mezőtúr: Karcagi Szakképzési Centrum (626)",
+  "Gyomaendrőd: Mozgáskultúra Stúdió",
+];
+
+export const workshopNote =
+  "Workshopok időről időre indulnak, évente 1–2 alkalommal.";
 
 export const imageLibrary = {
   hero:

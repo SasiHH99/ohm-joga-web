@@ -20,7 +20,7 @@ const displayFont = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
   title: {
-    default: "Ohm Jóga | Prémium jóga és belső egyensúly",
+    default: "Ohm Jóga | Csend, gyakorlás, jelenlét",
     template: "%s | Ohm Jóga",
   },
   description: siteConfig.description,

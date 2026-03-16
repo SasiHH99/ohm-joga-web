@@ -1,18 +1,14 @@
 import Link from "next/link";
 
-import { mainNavigation } from "@/lib/site";
+import { contactInfo, mainNavigation } from "@/lib/site";
 import type { SiteSettings } from "@/lib/types";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
   return (
     <footer className="border-t border-stone/15 bg-ivory/60">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-14 md:grid-cols-[1.2fr_0.8fr_1fr] md:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-[1fr_0.8fr_0.9fr] md:px-8">
         <div>
-          <p className="eyebrow">Ohm Jóga</p>
-          <h3 className="mt-4 font-display text-3xl text-ink">
-            Nyugodt tér a belső figyelemhez és a tudatos gyakorláshoz.
-          </h3>
-          <p className="mt-4 max-w-md text-stone">{settings.description}</p>
+          <p className="font-display text-4xl text-ink">Ohm Jóga</p>
         </div>
 
         <div>
@@ -33,13 +29,11 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             Elérhetőség
           </h4>
           <div className="mt-5 space-y-3 text-stone">
-            <p>{settings.locationName}</p>
-            <p>{settings.address}</p>
             <a href={`mailto:${settings.email}`} className="block text-ink">
               {settings.email}
             </a>
-            <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="block text-ink">
-              {settings.phone}
+            <a href={`tel:${contactInfo.phoneHref}`} className="block text-ink">
+              {contactInfo.phoneDisplay}
             </a>
           </div>
         </div>

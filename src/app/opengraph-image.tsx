@@ -23,7 +23,14 @@ export default function OpenGraphImage() {
           justifyContent: "space-between",
         }}
       >
-        <div style={{ fontSize: 24, letterSpacing: 8, textTransform: "uppercase", color: "#556b5d" }}>
+        <div
+          style={{
+            fontSize: 24,
+            letterSpacing: 8,
+            textTransform: "uppercase",
+            color: "#556b5d",
+          }}
+        >
           Ohm Jóga
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -36,11 +43,13 @@ export default function OpenGraphImage() {
               lineHeight: 0.95,
             }}
           >
-            <div style={{ display: "flex" }}>Kapcsolat</div>
-            <div style={{ display: "flex" }}>önmagaddal</div>
+            <div style={{ display: "flex" }}>Csend</div>
+            <div style={{ display: "flex" }}>gyakorlás</div>
+            <div style={{ display: "flex" }}>jelenlét</div>
           </div>
           <div style={{ fontSize: 32, maxWidth: 760, lineHeight: 1.35 }}>
-            Modern, prémium jógaélmény foglalási rendszerrel, tudástárral és adminfelülettel.
+            Letisztult, spirituális hangulatú jógaoldal bemutatkozással,
+            órarenddel és egyszerű kapcsolati információkkal.
           </div>
         </div>
       </div>

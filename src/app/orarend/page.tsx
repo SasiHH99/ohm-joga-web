@@ -1,60 +1,62 @@
-import { ButtonLink } from "@/components/ui/button";
 import { PageHero } from "@/components/site/page-hero";
-import { getClasses, getServices } from "@/lib/data";
-import { formatDateRange } from "@/lib/format";
+import {
+  locationItems,
+  pricingItems,
+  scheduleEntries,
+  workshopNote,
+} from "@/lib/site";
 
 export const metadata = {
   title: "Órarend",
   description:
-    "Átlátható heti órarend dátummal, időponttal, helyszínnel, szabad helyekkel és közvetlen foglalási lehetőséggel.",
+    "Egyszerűen áttekinthető órarend, árak, helyszínek és rövid workshop információ egy nyugodt, letisztult oldalon.",
 };
 
-export default async function SchedulePage() {
-  const [classes, services] = await Promise.all([getClasses(), getServices(true)]);
-
+export default function SchedulePage() {
   return (
     <>
       <PageHero
         eyebrow="Órarend"
-        title="Átlátható, konverzióra optimalizált órarend"
-        description="Heti nézet helyett itt egy gyorsan áttekinthető, listás struktúra kapott prioritást mobilon és desktopon is."
-        primaryCta={{ href: "/foglalas", label: "Foglalás indítása" }}
+        title="Heti órák, átlátható rendben."
+        description="Az órarend letisztult formában mutatja a jelenlegi alkalmakat, az árakat és a helyszíneket."
       />
 
       <section className="section-shell py-18 md:py-24">
-        <div className="table-shell">
-          <div className="grid grid-cols-[1.25fr_1fr_1fr_0.9fr] gap-4 border-b border-stone/10 px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-stone">
-            <span>Óra</span>
-            <span>Időpont</span>
-            <span>Helyszín</span>
-            <span>Foglalás</span>
-          </div>
-          {classes.map((item) => {
-            const service = services.find((serviceItem) => serviceItem.id === item.serviceId);
+        <div className="grid gap-4">
+          {scheduleEntries.map((item) => (
+            <article
+              key={`${item.day}-${item.location}`}
+              className="grid gap-3 rounded-[1.75rem] border border-white/40 bg-ivory/72 px-6 py-5 shadow-[0_20px_70px_rgba(57,49,39,0.07)] md:grid-cols-[0.75fr_1fr_0.9fr]"
+            >
+              <p className="text-sm uppercase tracking-[0.18em] text-moss">{item.day}</p>
+              <p className="text-lg font-semibold text-ink">{item.className}</p>
+              <p className="text-stone">{item.location}</p>
+            </article>
+          ))}
+        </div>
 
-            return (
-              <div
-                key={item.id}
-                className="grid grid-cols-1 gap-4 border-b border-stone/10 px-6 py-6 md:grid-cols-[1.25fr_1fr_1fr_0.9fr]"
-              >
-                <div>
-                  <h2 className="text-xl font-semibold text-ink">{item.title}</h2>
-                  <p className="mt-2 text-sm text-stone">{service?.title}</p>
-                  <p className="mt-2 text-sm text-stone">{item.description}</p>
-                </div>
-                <div className="text-sm leading-7 text-stone">{formatDateRange(item.startsAt, item.endsAt)}</div>
-                <div className="text-sm leading-7 text-stone">
-                  <p>{item.locationName}</p>
-                  <p>{item.availableSpots} szabad hely / {item.capacity}</p>
-                </div>
-                <div className="flex items-start md:justify-end">
-                  <ButtonLink href={`/foglalas?service=${item.serviceId}&class=${item.id}`}>
-                    Foglalás
-                  </ButtonLink>
-                </div>
-              </div>
-            );
-          })}
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <div className="card-surface rounded-[1.75rem] p-6">
+            <p className="eyebrow">Árak</p>
+            <div className="mt-5 space-y-3 text-lg leading-8 text-stone">
+              {pricingItems.map((item) => (
+                <p key={item}>{item}</p>
+              ))}
+            </div>
+          </div>
+
+          <div className="card-surface rounded-[1.75rem] p-6">
+            <p className="eyebrow">Helyszínek</p>
+            <div className="mt-5 space-y-3 text-lg leading-8 text-stone">
+              {locationItems.map((item) => (
+                <p key={item}>{item}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-[1.75rem] border border-sage/40 bg-sage/20 px-6 py-5 text-stone">
+          {workshopNote}
         </div>
       </section>
     </>

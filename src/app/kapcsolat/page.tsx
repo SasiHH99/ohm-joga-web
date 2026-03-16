@@ -1,12 +1,12 @@
-import { ContactForm } from "@/components/forms/contact-form";
+import { ButtonLink } from "@/components/ui/button";
 import { PageHero } from "@/components/site/page-hero";
-import { frequentlyAskedQuestions } from "@/lib/site";
 import { getSettings } from "@/lib/data";
+import { contactInfo } from "@/lib/site";
 
 export const metadata = {
   title: "Kapcsolat",
   description:
-    "Kapcsolatfelvételi űrlap, email, telefon, helyszíninformáció, social linkek és GYIK blokk.",
+    "Egyszerű kapcsolat oldal telefonszámmal és e-mail címmel, felesleges űrlapok és marketinges blokkok nélkül.",
 };
 
 export default async function ContactPage() {
@@ -16,56 +16,31 @@ export default async function ContactPage() {
     <>
       <PageHero
         eyebrow="Kapcsolat"
-        title="Kérdezz, érdeklődj, vagy indulj el egy személyes beszélgetéssel"
-        description="A kapcsolat oldal nem zsákutca: egyformán működik inquiry, bizalomépítés és foglaláselőkészítés céljára."
+        title="Kapcsolat"
+        description="Ha kérdésed van, telefonon vagy e-mailben tudsz legegyszerűbben kapcsolódni."
       />
 
       <section className="section-shell py-18 md:py-24">
-        <div className="grid gap-10 md:grid-cols-[0.92fr_1.08fr]">
-          <div className="grid gap-5">
-            <div className="card-surface rounded-[2rem] p-6">
-              <p className="eyebrow">Elérhetőségek</p>
-              <div className="mt-5 space-y-3 text-stone">
-                <p>{settings.locationName}</p>
-                <p>{settings.address}</p>
-                <a href={`mailto:${settings.email}`} className="block text-ink">
-                  {settings.email}
-                </a>
-                <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="block text-ink">
-                  {settings.phone}
-                </a>
-                <a href={settings.facebookUrl} target="_blank" className="block text-ink">
-                  Facebook
-                </a>
-              </div>
+        <div className="mx-auto grid max-w-4xl gap-6 rounded-[2rem] border border-white/40 bg-ivory/72 p-6 shadow-[0_24px_90px_rgba(57,49,39,0.08)] md:grid-cols-[1fr_auto] md:items-center md:p-8">
+          <div className="space-y-4">
+            <div>
+              <p className="eyebrow">Telefonszám</p>
+              <p className="mt-2 text-2xl font-semibold text-ink">
+                {contactInfo.phoneDisplay}
+              </p>
             </div>
-
-            <div className="card-surface rounded-[2rem] p-6">
-              <p className="eyebrow">Helyszín / térkép</p>
-              <div className="mt-5 rounded-[1.5rem] bg-gradient-to-br from-sand/30 via-ivory to-sage/30 p-8">
-                <p className="text-lg font-semibold text-ink">{settings.locationName}</p>
-                <p className="mt-2 text-stone">{settings.address}</p>
-                <p className="mt-4 text-sm text-stone">
-                  A pontos stúdióhelyszín settingsből vagy Supabase adminból konfigurálható.
-                </p>
-              </div>
+            <div>
+              <p className="eyebrow">E-mail</p>
+              <p className="mt-2 text-2xl font-semibold text-ink">{settings.email}</p>
             </div>
           </div>
 
-          <ContactForm />
-        </div>
-      </section>
-
-      <section className="section-shell pb-20 md:pb-24">
-        <div className="grid gap-4">
-          {frequentlyAskedQuestions.map((faq) => (
-            <details key={faq.question} className="card-surface rounded-[1.5rem] p-5">
-              <summary className="cursor-pointer text-lg font-semibold text-ink">
-                {faq.question}
-              </summary>
-              <p className="mt-4 max-w-3xl leading-8 text-stone">{faq.answer}</p>
-            </details>
-          ))}
+          <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
+            <ButtonLink href={`tel:${contactInfo.phoneHref}`}>Hívás</ButtonLink>
+            <ButtonLink href={`mailto:${settings.email}`} variant="secondary">
+              E-mail
+            </ButtonLink>
+          </div>
         </div>
       </section>
     </>

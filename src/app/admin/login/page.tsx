@@ -1,10 +1,10 @@
+import { Button } from "@/components/ui/button";
 import { hasSupabasePublicEnv } from "@/lib/env";
 import { loginAdminServerAction } from "@/server/actions/public";
-import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Admin belépés",
-  description: "Supabase Auth alapú admin belépés preview fallback támogatással.",
+  description: "Egyszerű admin belépés az Ohm Jóga információközpontú oldalához.",
 };
 
 function getErrorMessage(error: string | undefined) {
@@ -36,10 +36,12 @@ export default async function AdminLoginPage({
       <div className="mx-auto grid w-full max-w-5xl gap-8 rounded-[2.5rem] border border-white/40 bg-ivory/75 p-8 shadow-[0_30px_120px_rgba(38,35,31,0.08)] md:grid-cols-[0.9fr_1.1fr] md:p-10">
         <div>
           <p className="eyebrow">Admin belépés</p>
-          <h1 className="mt-4 font-display text-5xl text-ink">Tiszta adminfelület, tiszta hozzáférés</h1>
+          <h1 className="mt-4 font-display text-5xl text-ink">
+            Egyszerű hozzáférés a belső áttekintéshez
+          </h1>
           <p className="mt-5 max-w-md text-lg leading-8 text-stone">
-            Dashboard, foglaláskezelés, órarend admin, blog szerkesztés, kapcsolat üzenetek,
-            vélemények és média egy helyen.
+            A belépés után egy letisztult, minimális admin felület nyílik meg,
+            ahol az oldal jelenlegi szerkezete és alap információi láthatók.
           </p>
         </div>
         <div className="card-surface rounded-[2rem] p-8">
