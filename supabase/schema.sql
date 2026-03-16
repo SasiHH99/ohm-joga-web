@@ -139,6 +139,8 @@ create or replace function public.is_admin()
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -146,6 +148,8 @@ as $$
     where id = auth.uid()
   );
 $$;
+
+grant execute on function public.is_admin() to anon, authenticated, service_role;
 
 alter table public.settings enable row level security;
 alter table public.admin_users enable row level security;
@@ -167,6 +171,10 @@ for all using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "admins manage admin_users" on public.admin_users;
 create policy "admins manage admin_users" on public.admin_users
 for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "users read own admin profile" on public.admin_users;
+create policy "users read own admin profile" on public.admin_users
+for select using (id = auth.uid());
 
 drop policy if exists "public read active services" on public.services;
 create policy "public read active services" on public.services

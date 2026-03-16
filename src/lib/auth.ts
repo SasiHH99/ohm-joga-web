@@ -2,7 +2,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { env, hasSupabasePublicEnv } from "@/lib/env";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  createAdminSupabaseClient,
+  createServerSupabaseClient,
+} from "@/lib/supabase/server";
 import type { AdminProfile } from "@/lib/types";
 
 export const PREVIEW_ADMIN_COOKIE = "ohm-preview-admin";
@@ -38,7 +41,13 @@ export async function getAdminProfile(): Promise<AdminProfile | null> {
     return null;
   }
 
-  const { data: adminProfile } = await supabase
+  const adminClient = createAdminSupabaseClient();
+
+  if (!adminClient) {
+    return null;
+  }
+
+  const { data: adminProfile } = await adminClient
     .from("admin_users")
     .select("id, full_name, role")
     .eq("id", user.id)
