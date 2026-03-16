@@ -4,7 +4,7 @@ import { AdminPageHeader } from "@/components/admin/page-header";
 import { AdminShell } from "@/components/admin/shell";
 import { StatCard } from "@/components/admin/stat-card";
 import { requireAdminProfile } from "@/lib/auth";
-import { getBookings, getClasses, getContactMessages, getDashboardStats } from "@/lib/data";
+import { getAdminDashboardSnapshot } from "@/lib/data";
 import { formatDateRange } from "@/lib/format";
 
 export const metadata = {
@@ -13,12 +13,7 @@ export const metadata = {
 
 export default async function AdminDashboardPage() {
   const profile = await requireAdminProfile();
-  const [stats, bookings, classes, messages] = await Promise.all([
-    getDashboardStats(),
-    getBookings(),
-    getClasses(),
-    getContactMessages(),
-  ]);
+  const snapshot = await getAdminDashboardSnapshot();
 
   return (
     <AdminShell profile={profile} currentPath="/admin">
@@ -28,20 +23,38 @@ export default async function AdminDashboardPage() {
       />
 
       <div className="grid gap-5 md:grid-cols-4">
-        <StatCard label="Foglalás" value={stats.bookingCount} hint="Összes aktív és demo booking" />
-        <StatCard label="Következő órák" value={stats.upcomingClassCount} hint="Órarendből számolva" />
-        <StatCard label="Új üzenetek" value={stats.unreadMessageCount} hint="Olvasatlan kapcsolatfelvételek" />
-        <StatCard label="Publikált cikkek" value={stats.publishedPostCount} hint="Blog admin státusz alapján" />
+        <StatCard
+          label="Foglalás"
+          value={snapshot.stats.bookingCount}
+          hint="Összes aktív és demo booking"
+        />
+        <StatCard
+          label="Következő órák"
+          value={snapshot.stats.upcomingClassCount}
+          hint="Órarendből számolva"
+        />
+        <StatCard
+          label="Új üzenetek"
+          value={snapshot.stats.unreadMessageCount}
+          hint="Olvasatlan kapcsolatfelvételek"
+        />
+        <StatCard
+          label="Publikált cikkek"
+          value={snapshot.stats.publishedPostCount}
+          hint="Blog admin státusz alapján"
+        />
       </div>
 
       <div className="mt-8 grid gap-8 md:grid-cols-2">
         <section className="card-surface rounded-[2rem] p-6">
           <h2 className="text-2xl font-semibold text-ink">Következő órák</h2>
           <div className="mt-5 space-y-4">
-            {classes.slice(0, 4).map((item) => (
+            {snapshot.upcomingClasses.map((item) => (
               <div key={item.id} className="rounded-[1.25rem] bg-background/70 p-4">
                 <p className="font-semibold text-ink">{item.title}</p>
-                <p className="mt-2 text-sm text-stone">{formatDateRange(item.startsAt, item.endsAt)}</p>
+                <p className="mt-2 text-sm text-stone">
+                  {formatDateRange(item.startsAt, item.endsAt)}
+                </p>
               </div>
             ))}
           </div>
@@ -50,11 +63,13 @@ export default async function AdminDashboardPage() {
         <section className="card-surface rounded-[2rem] p-6">
           <h2 className="text-2xl font-semibold text-ink">Legfrissebb foglalások</h2>
           <div className="mt-5 space-y-4">
-            {bookings.slice(0, 4).map((item) => (
+            {snapshot.recentBookings.map((item) => (
               <div key={item.id} className="rounded-[1.25rem] bg-background/70 p-4">
                 <p className="font-semibold text-ink">{item.name}</p>
                 <p className="mt-2 text-sm text-stone">{item.email}</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-moss">{item.status}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-moss">
+                  {item.status}
+                </p>
               </div>
             ))}
           </div>
@@ -69,10 +84,12 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
         <div className="mt-5 space-y-4">
-          {messages.slice(0, 3).map((item) => (
+          {snapshot.recentMessages.map((item) => (
             <div key={item.id} className="rounded-[1.25rem] bg-background/70 p-4">
               <p className="font-semibold text-ink">{item.subject}</p>
-              <p className="mt-1 text-sm text-stone">{item.name} • {item.email}</p>
+              <p className="mt-1 text-sm text-stone">
+                {item.name} • {item.email}
+              </p>
             </div>
           ))}
         </div>

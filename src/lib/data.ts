@@ -1,6 +1,6 @@
 import { parseISO } from "date-fns";
 
-import { hasSupabasePublicEnv } from "@/lib/env";
+import { hasSupabasePublicEnv, hasSupabaseServiceEnv } from "@/lib/env";
 import {
   mockBlogPosts,
   mockBookings,
@@ -22,6 +22,7 @@ import type {
   Booking,
   ClassSession,
   ContactMessage,
+  AdminDashboardSnapshot,
   DashboardStats,
   MediaAsset,
   Service,
@@ -392,6 +393,117 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     };
   } catch {
     return mockDashboardStats;
+  }
+}
+
+function getMockAdminDashboardSnapshot(): AdminDashboardSnapshot {
+  return {
+    stats: mockDashboardStats,
+    upcomingClasses: sortClasses(mockClasses).slice(0, 4).map((item) => ({
+      id: item.id,
+      title: item.title,
+      startsAt: item.startsAt,
+      endsAt: item.endsAt,
+    })),
+    recentBookings: mockBookings.slice(0, 4).map((item) => ({
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      status: item.status,
+    })),
+    recentMessages: mockMessages.slice(0, 3).map((item) => ({
+      id: item.id,
+      subject: item.subject,
+      name: item.name,
+      email: item.email,
+    })),
+  };
+}
+
+export async function getAdminDashboardSnapshot(): Promise<AdminDashboardSnapshot> {
+  if (!hasSupabaseServiceEnv) {
+    return getMockAdminDashboardSnapshot();
+  }
+
+  try {
+    const admin = createAdminSupabaseClient();
+
+    if (!admin) {
+      return getMockAdminDashboardSnapshot();
+    }
+
+    const nowIso = new Date().toISOString();
+
+    const [
+      bookingsCountResult,
+      upcomingClassesCountResult,
+      unreadMessagesCountResult,
+      publishedPostsCountResult,
+      upcomingClassesResult,
+      recentBookingsResult,
+      recentMessagesResult,
+    ] = await Promise.all([
+      admin.from("bookings").select("id", { count: "exact", head: true }),
+      admin
+        .from("classes")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "scheduled")
+        .gte("starts_at", nowIso),
+      admin
+        .from("contact_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "unread"),
+      admin
+        .from("blog_posts")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "published"),
+      admin
+        .from("classes")
+        .select("id, title, starts_at, ends_at")
+        .eq("status", "scheduled")
+        .gte("starts_at", nowIso)
+        .order("starts_at")
+        .limit(4),
+      admin
+        .from("bookings")
+        .select("id, name, email, status")
+        .order("created_at", { ascending: false })
+        .limit(4),
+      admin
+        .from("contact_messages")
+        .select("id, subject, name, email")
+        .order("created_at", { ascending: false })
+        .limit(3),
+    ]);
+
+    return {
+      stats: {
+        bookingCount: bookingsCountResult.count ?? 0,
+        upcomingClassCount: upcomingClassesCountResult.count ?? 0,
+        unreadMessageCount: unreadMessagesCountResult.count ?? 0,
+        publishedPostCount: publishedPostsCountResult.count ?? 0,
+      },
+      upcomingClasses: (upcomingClassesResult.data ?? []).map((item) => ({
+        id: item.id,
+        title: item.title,
+        startsAt: item.starts_at,
+        endsAt: item.ends_at,
+      })),
+      recentBookings: (recentBookingsResult.data ?? []).map((item) => ({
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        status: item.status,
+      })),
+      recentMessages: (recentMessagesResult.data ?? []).map((item) => ({
+        id: item.id,
+        subject: item.subject,
+        name: item.name,
+        email: item.email,
+      })),
+    };
+  } catch {
+    return getMockAdminDashboardSnapshot();
   }
 }
 

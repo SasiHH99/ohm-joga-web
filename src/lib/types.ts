@@ -116,6 +116,28 @@ export type DashboardStats = {
   publishedPostCount: number;
 };
 
+export type AdminDashboardSnapshot = {
+  stats: DashboardStats;
+  upcomingClasses: Array<{
+    id: string;
+    title: string;
+    startsAt: string;
+    endsAt: string;
+  }>;
+  recentBookings: Array<{
+    id: string;
+    name: string;
+    email: string;
+    status: Booking["status"];
+  }>;
+  recentMessages: Array<{
+    id: string;
+    subject: string;
+    name: string;
+    email: string;
+  }>;
+};
+
 export type MediaAsset = {
   name: string;
   url: string;
