@@ -149,6 +149,15 @@ export function studioLocalDateTimeToIso(localDateTime: string) {
   return new Date(timestamp).toISOString();
 }
 
+export function addDaysToLocalDateTime(localDateTime: string, dayOffset: number) {
+  const [datePart, timePart = "00:00"] = localDateTime.split("T");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hour, minute] = timePart.split(":").map(Number);
+  const base = new Date(Date.UTC(year, month - 1, day + dayOffset, hour, minute));
+
+  return `${base.getUTCFullYear()}-${String(base.getUTCMonth() + 1).padStart(2, "0")}-${String(base.getUTCDate()).padStart(2, "0")}T${String(base.getUTCHours()).padStart(2, "0")}:${String(base.getUTCMinutes()).padStart(2, "0")}`;
+}
+
 export function minutesToDurationLabel(minutes: number) {
   if (minutes >= 60 && minutes % 60 === 0) {
     return `${minutes / 60} óra`;

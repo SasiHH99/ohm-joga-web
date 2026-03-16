@@ -32,6 +32,8 @@ export const classFormSchema = z.object({
   capacity: z.coerce.number().int().min(1).max(99),
   status: z.enum(["scheduled", "cancelled", "completed"]),
   isRecurring: z.boolean().optional(),
+  repeatMode: z.enum(["none", "weekly"]).default("none"),
+  repeatCount: z.coerce.number().int().min(1).max(24).default(1),
 });
 
 export const calendarDayFormSchema = z.object({

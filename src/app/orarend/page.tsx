@@ -1,5 +1,5 @@
-import { CalendarGrid } from "@/components/site/calendar-grid";
 import { PageHero } from "@/components/site/page-hero";
+import { PublicCalendarExplorer } from "@/components/site/public-calendar-explorer";
 import { getCalendarDays, getClasses } from "@/lib/data";
 import { formatDateRange, formatWeekdayLong } from "@/lib/format";
 import {
@@ -112,7 +112,7 @@ export default async function SchedulePage() {
             A naptárjelölések feltöltés alatt állnak.
           </div>
         ) : (
-          <CalendarGrid classes={classes} markedDays={markedDays} />
+          <PublicCalendarExplorer classes={classes} markedDays={markedDays} />
         )}
       </section>
     </>

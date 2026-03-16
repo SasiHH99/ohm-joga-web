@@ -36,6 +36,15 @@ export type CalendarDay = {
   note: string;
 };
 
+export type CalendarCellItem = {
+  id: string;
+  kind: "class" | "class-day" | "free-day" | "unavailable";
+  title: string;
+  timeLabel: string;
+  location: string;
+  note: string;
+};
+
 export type Booking = {
   id: string;
   serviceId: string;

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 import { PREVIEW_ADMIN_COOKIE } from "@/lib/auth";
 import { hasSupabasePublicEnv, hasSupabaseServiceEnv } from "@/lib/env";
-import { studioLocalDateTimeToIso } from "@/lib/format";
+import { addDaysToLocalDateTime, studioLocalDateTimeToIso } from "@/lib/format";
 import { createAdminSupabaseClient, createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   blogFormSchema,
@@ -134,6 +134,8 @@ export async function upsertClassSessionAction(formData: FormData) {
     capacity: getString(formData, "capacity"),
     status: getString(formData, "status"),
     isRecurring: getCheckbox(formData, "isRecurring"),
+    repeatMode: getString(formData, "repeatMode") || "none",
+    repeatCount: getString(formData, "repeatCount") || "1",
   });
 
   if (parsed.success && hasSupabaseServiceEnv) {
@@ -141,19 +143,40 @@ export async function upsertClassSessionAction(formData: FormData) {
     const serviceId = await ensureScheduleServiceId();
 
     if (admin && serviceId) {
-      await admin.from("classes").upsert({
-        id: parsed.data.id,
-        service_id: serviceId,
-        title: parsed.data.title,
-        description: parsed.data.description,
-        starts_at: studioLocalDateTimeToIso(parsed.data.startsAtLocal),
-        ends_at: studioLocalDateTimeToIso(parsed.data.endsAtLocal),
-        location_name: parsed.data.locationName,
-        location_address: parsed.data.locationAddress,
-        capacity: parsed.data.capacity,
-        status: parsed.data.status,
-        is_recurring: parsed.data.isRecurring ?? false,
-      });
+      if (!parsed.data.id && parsed.data.repeatMode === "weekly" && parsed.data.repeatCount > 1) {
+        const payload = Array.from({ length: parsed.data.repeatCount }, (_, index) => ({
+          service_id: serviceId,
+          title: parsed.data.title,
+          description: parsed.data.description,
+          starts_at: studioLocalDateTimeToIso(
+            addDaysToLocalDateTime(parsed.data.startsAtLocal, index * 7),
+          ),
+          ends_at: studioLocalDateTimeToIso(
+            addDaysToLocalDateTime(parsed.data.endsAtLocal, index * 7),
+          ),
+          location_name: parsed.data.locationName,
+          location_address: parsed.data.locationAddress,
+          capacity: parsed.data.capacity,
+          status: parsed.data.status,
+          is_recurring: true,
+        }));
+
+        await admin.from("classes").insert(payload);
+      } else {
+        await admin.from("classes").upsert({
+          id: parsed.data.id,
+          service_id: serviceId,
+          title: parsed.data.title,
+          description: parsed.data.description,
+          starts_at: studioLocalDateTimeToIso(parsed.data.startsAtLocal),
+          ends_at: studioLocalDateTimeToIso(parsed.data.endsAtLocal),
+          location_name: parsed.data.locationName,
+          location_address: parsed.data.locationAddress,
+          capacity: parsed.data.capacity,
+          status: parsed.data.status,
+          is_recurring: parsed.data.isRecurring ?? false,
+        });
+      }
     }
   }
 

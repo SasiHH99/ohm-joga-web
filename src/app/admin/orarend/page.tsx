@@ -9,19 +9,42 @@ import {
   upsertClassSessionAction,
 } from "@/server/actions/admin";
 
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+function getNewClassDefaults(day?: string) {
+  if (!day || !/^\d{4}-\d{2}-\d{2}$/.test(day)) {
+    return {
+      startsAtLocal: "",
+      endsAtLocal: "",
+    };
+  }
+
+  return {
+    startsAtLocal: `${day}T18:00`,
+    endsAtLocal: `${day}T19:15`,
+  };
+}
+
 export const metadata = {
   title: "Admin órarend",
 };
 
-export default async function AdminSchedulePage() {
+export default async function AdminSchedulePage({
+  searchParams,
+}: {
+  searchParams?: SearchParams;
+}) {
   const profile = await requireAdminProfile();
   const classes = await getClasses(true);
+  const params = searchParams ? await searchParams : {};
+  const selectedDay = typeof params.day === "string" ? params.day : "";
+  const defaults = getNewClassDefaults(selectedDay);
 
   return (
     <AdminShell profile={profile} currentPath="/admin/orarend">
       <AdminPageHeader
         title="Órarend"
-        description="Itt lehet kezelni az aktuális órákat: dátum, időpont, helyszín és státusz alapján. A publikus órarend automatikusan ebből a listából épül fel."
+        description="Itt lehet kezelni az aktuális órákat: dátum, időpont, helyszín és státusz alapján. Az új óráknál heti ismétlés is beállítható."
       />
 
       <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
@@ -32,6 +55,11 @@ export default async function AdminSchedulePage() {
           <div>
             <p className="eyebrow">Új óra</p>
             <h2 className="mt-3 text-2xl font-semibold text-ink">Új dátum felvitele</h2>
+            {selectedDay ? (
+              <p className="mt-3 text-sm text-stone">
+                A naptárból kiválasztott nap: <span className="font-semibold text-ink">{selectedDay}</span>
+              </p>
+            ) : null}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -60,6 +88,7 @@ export default async function AdminSchedulePage() {
               <input
                 name="startsAtLocal"
                 type="datetime-local"
+                defaultValue={defaults.startsAtLocal}
                 className="input-field"
                 required
               />
@@ -69,6 +98,7 @@ export default async function AdminSchedulePage() {
               <input
                 name="endsAtLocal"
                 type="datetime-local"
+                defaultValue={defaults.endsAtLocal}
                 className="input-field"
                 required
               />
@@ -120,6 +150,27 @@ export default async function AdminSchedulePage() {
             </div>
           </div>
 
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-2">
+              <label className="text-sm font-semibold text-ink">Ismétlés</label>
+              <select name="repeatMode" className="select-field" defaultValue="none">
+                <option value="none">Nincs ismétlés</option>
+                <option value="weekly">Hetente ismétlődik</option>
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-semibold text-ink">Hány hétre előre</label>
+              <input
+                name="repeatCount"
+                type="number"
+                min="1"
+                max="24"
+                defaultValue="1"
+                className="input-field"
+              />
+            </div>
+          </div>
+
           <label className="flex items-center gap-3 text-sm text-stone">
             <input type="checkbox" name="isRecurring" />
             Visszatérő alkalomként jelölöm
@@ -135,7 +186,7 @@ export default async function AdminSchedulePage() {
           <div className="mt-4 space-y-4 text-stone">
             <p>Az itt felvitt dátumok jelennek meg a publikus órarend oldalon és a kezdőlapi rövid előnézetben is.</p>
             <p>Ha egy alkalom elmarad, a státuszt elég átállítani, nem kell újraírni az egész órarendet.</p>
-            <p>A naptár oldalon külön meg tudod jelölni a szabadnapokat és a szüneteket.</p>
+            <p>Ha heti ismétlést állítasz be, a rendszer egyetlen mentéssel több hétre előre létrehozza ugyanazt az órát.</p>
           </div>
         </section>
       </div>
@@ -171,6 +222,8 @@ export default async function AdminSchedulePage() {
 
             <form action={upsertClassSessionAction} className="mt-5 grid gap-4">
               <input type="hidden" name="id" value={item.id} />
+              <input type="hidden" name="repeatMode" value="none" />
+              <input type="hidden" name="repeatCount" value="1" />
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
