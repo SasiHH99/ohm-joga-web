@@ -1,8 +1,16 @@
 import { env } from "@/lib/env";
 
+function getSafeSiteUrl() {
+  try {
+    return new URL(env.siteUrl).toString();
+  } catch {
+    return "https://ohm-joga-web.vercel.app";
+  }
+}
+
 export const siteConfig = {
   name: "Ohm Jóga",
-  siteUrl: env.siteUrl,
+  siteUrl: getSafeSiteUrl(),
   description:
     "Prémium, nyugodt és letisztult jógaélmény magyar nyelven, foglalási rendszerrel, tudástárral és adminfelülettel.",
   locationLabel: "Személyes órák és online kapcsolódás",
