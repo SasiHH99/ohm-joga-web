@@ -23,7 +23,11 @@ export const mainNavigation = [
   { href: "/kapcsolat", label: "Kapcsolat" },
 ];
 
-export const adminNavigation = [{ href: "/admin", label: "Áttekintés" }];
+export const adminNavigation = [
+  { href: "/admin", label: "Áttekintés" },
+  { href: "/admin/blog", label: "Blog" },
+  { href: "/admin/media", label: "Média" },
+];
 
 export const contactInfo = {
   phoneDisplay: "06 70 385 6749",

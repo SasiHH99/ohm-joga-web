@@ -8,7 +8,7 @@ import {
   scheduleEntries,
   workshopNote,
 } from "@/lib/site";
-import { getSettings } from "@/lib/data";
+import { getBlogPosts, getSettings } from "@/lib/data";
 
 export const metadata = {
   title: "Admin áttekintés",
@@ -16,13 +16,19 @@ export const metadata = {
 
 export default async function AdminDashboardPage() {
   const profile = await requireAdminProfile();
-  const settings = await getSettings();
+  const [settings, posts] = await Promise.all([
+    getSettings(),
+    getBlogPosts({ includeDrafts: true }),
+  ]);
+
+  const publishedCount = posts.filter((post) => post.status === "published").length;
+  const draftCount = posts.filter((post) => post.status === "draft").length;
 
   return (
     <AdminShell profile={profile} currentPath="/admin">
       <AdminPageHeader
         title="Áttekintés"
-        description="Az admin felület most a valóban szükséges, egyszerű információkra van visszahúzva."
+        description="A lecsupaszított adminban most csak a valóban használt részek maradnak: az oldal áttekintése, a blog és a média."
       />
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -44,8 +50,12 @@ export default async function AdminDashboardPage() {
         </section>
 
         <section className="card-surface rounded-[2rem] p-6">
-          <p className="eyebrow">Workshopok</p>
-          <p className="mt-5 leading-8 text-stone">{workshopNote}</p>
+          <p className="eyebrow">Blog</p>
+          <div className="mt-5 space-y-3 text-stone">
+            <p>Összes cikk: {posts.length}</p>
+            <p>Publikált: {publishedCount}</p>
+            <p>Vázlat: {draftCount}</p>
+          </div>
         </section>
       </div>
 
@@ -65,12 +75,29 @@ export default async function AdminDashboardPage() {
         </div>
       </section>
 
-      <section className="mt-8 card-surface rounded-[2rem] p-6">
-        <h2 className="text-2xl font-semibold text-ink">Helyszínek</h2>
-        <div className="mt-6 space-y-3 text-stone">
-          {locationItems.map((item) => (
-            <p key={item}>{item}</p>
-          ))}
+      <section className="mt-8 grid gap-6 md:grid-cols-2">
+        <div className="card-surface rounded-[2rem] p-6">
+          <h2 className="text-2xl font-semibold text-ink">Legutóbbi cikkek</h2>
+          <div className="mt-5 space-y-4">
+            {posts.slice(0, 3).map((post) => (
+              <div key={post.id} className="rounded-[1.25rem] bg-background/70 p-4">
+                <p className="font-semibold text-ink">{post.title}</p>
+                <p className="mt-2 text-sm text-stone">
+                  {post.slug} • {post.status}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card-surface rounded-[2rem] p-6">
+          <h2 className="text-2xl font-semibold text-ink">Helyszínek és workshopok</h2>
+          <div className="mt-5 space-y-3 text-stone">
+            {locationItems.map((item) => (
+              <p key={item}>{item}</p>
+            ))}
+            <p className="pt-3">{workshopNote}</p>
+          </div>
         </div>
       </section>
     </AdminShell>

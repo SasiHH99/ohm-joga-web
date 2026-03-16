@@ -67,7 +67,7 @@ export async function getSettings(): Promise<SiteSettings> {
       instagramUrl: data.instagram_url ?? "",
       facebookUrl: data.facebook_url ?? "",
       heroPrimaryCta: data.hero_primary_cta ?? "Órarend megtekintése",
-      heroSecondaryCta: data.hero_secondary_cta ?? "Óra foglalása",
+      heroSecondaryCta: data.hero_secondary_cta ?? "Kapcsolat",
     };
   } catch {
     return mockSettings;
