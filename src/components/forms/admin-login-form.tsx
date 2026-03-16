@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 
 import { SubmitButton } from "@/components/ui/submit-button";
-import { initialActionState, loginAdminAction } from "@/server/actions/public";
+import { loginAdminAction } from "@/server/actions/public";
+import { initialActionState } from "@/server/actions/state";
 
 export function AdminLoginForm({ previewMode }: { previewMode: boolean }) {
   const router = useRouter();

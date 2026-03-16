@@ -23,6 +23,27 @@ export async function createServerSupabaseClient() {
   });
 }
 
+export async function createActionSupabaseClient() {
+  if (!hasSupabasePublicEnv) {
+    return null;
+  }
+
+  const cookieStore = await cookies();
+
+  return createServerClient(env.supabaseUrl, env.supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          cookieStore.set(name, value, options);
+        });
+      },
+    },
+  });
+}
+
 export function createAdminSupabaseClient() {
   if (!hasSupabaseServiceEnv) {
     return null;

@@ -4,7 +4,8 @@ import { clsx } from "clsx";
 import { useActionState } from "react";
 
 import { SubmitButton } from "@/components/ui/submit-button";
-import { initialActionState, submitContactAction } from "@/server/actions/public";
+import { submitContactAction } from "@/server/actions/public";
+import { initialActionState } from "@/server/actions/state";
 
 export function ContactForm() {
   const [state, formAction] = useActionState(submitContactAction, initialActionState);

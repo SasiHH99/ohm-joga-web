@@ -6,7 +6,8 @@ import { useActionState, useState } from "react";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { formatDateRange } from "@/lib/format";
 import type { ClassSession, Service } from "@/lib/types";
-import { initialActionState, submitBookingAction } from "@/server/actions/public";
+import { submitBookingAction } from "@/server/actions/public";
+import { initialActionState } from "@/server/actions/state";
 
 export function BookingForm({
   services,
